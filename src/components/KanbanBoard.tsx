@@ -1,5 +1,6 @@
 import React, { useState, DragEvent, useEffect } from "react";
-import { FiPlus, FiTrash } from "react-icons/fi";
+import { FiPlus, FiTrash, FiExternalLink } from "react-icons/fi";
+import { FaTwitter, FaGithub } from "react-icons/fa";
 
 interface Card {
   id: string;
@@ -36,7 +37,7 @@ interface DeleteAreaProps {
 const KanbanBoard: React.FC = () => {
   const localCards = localStorage.getItem("cards");
   const [cards, setCards] = useState<Card[]>(
-    localCards ? JSON.parse(localCards) : DEFAULT_CARDS,
+    localCards ? JSON.parse(localCards) : DEFAULT_CARDS
   );
 
   useEffect(() => {
@@ -169,7 +170,7 @@ const Column: React.FC<ColumnProps> = ({
 
   const getNearestIndicator = (
     e: DragEvent<HTMLDivElement>,
-    indicators: Element[],
+    indicators: Element[]
   ) => {
     const DISTANCE_OFFSET = 50;
 
@@ -188,7 +189,7 @@ const Column: React.FC<ColumnProps> = ({
       {
         offset: Number.NEGATIVE_INFINITY,
         element: indicators[indicators.length - 1],
-      },
+      }
     );
 
     return el;
@@ -296,18 +297,51 @@ const DeleteArea: React.FC<DeleteAreaProps> = ({ setCards }) => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-[#0969da] tracking-tight mb-1">
-            kanban.board
+            board.sudipbiswas.dev
           </h1>
           <p className="text-sm text-[#656d76]">
-            // Project management interface
+            // Managing tasks should be easy and intuitive
           </p>
         </div>
-        {active && (
-          <div className="flex items-center gap-3 text-[#da3633] text-sm">
-            <FiTrash className="text-base" />
-            <span className="font-mono">Drop to delete</span>
-          </div>
-        )}
+        <div className="flex items-center gap-4">
+          {!active && (
+            <div className="flex items-center gap-3">
+              <a
+                href="https://sudipbiswas.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-xs text-[#656d76] hover:text-[#0969da] font-mono"
+              >
+                <FiExternalLink className="text-sm" />
+                <span>website</span>
+              </a>
+              <a
+                href="https://x.com/sudipcodes"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-xs text-[#656d76] hover:text-[#0969da] font-mono"
+              >
+                <FaTwitter className="text-sm" />
+                <span>twitter</span>
+              </a>
+              <a
+                href="https://github.com/sudipb7/board"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-xs text-[#656d76] hover:text-[#0969da] font-mono"
+              >
+                <FaGithub className="text-sm" />
+                <span>github</span>
+              </a>
+            </div>
+          )}
+          {active && (
+            <div className="flex items-center gap-3 text-[#da3633] text-sm">
+              <FiTrash className="text-base" />
+              <span className="font-mono">Drop to delete</span>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );
