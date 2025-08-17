@@ -1,5 +1,5 @@
 import React, { useState, DragEvent, useEffect } from "react";
-import { FiPlus, FiTrash, FiExternalLink } from "react-icons/fi";
+import { FiPlus, FiTrash, FiExternalLink, FiHome } from "react-icons/fi";
 import { FaTwitter, FaGithub } from "react-icons/fa";
 
 interface Card {
@@ -32,22 +32,32 @@ interface AddCardProps {
 
 interface DeleteAreaProps {
   setCards: React.Dispatch<React.SetStateAction<Card[]>>;
+  onShowLanding?: () => void;
 }
 
 const KanbanBoard: React.FC = () => {
   const localCards = localStorage.getItem("cards");
   const [cards, setCards] = useState<Card[]>(
-    localCards ? JSON.parse(localCards) : DEFAULT_CARDS
+    localCards ? JSON.parse(localCards) : DEFAULT_CARDS,
   );
 
   useEffect(() => {
     localStorage.setItem("cards", JSON.stringify(cards));
   }, [cards]);
 
+  const handleShowLanding = () => {
+    try {
+      localStorage.removeItem("board-landing-page-visited");
+      window.location.reload();
+    } catch (error) {
+      console.warn("Failed to reset landing page state:", error);
+    }
+  };
+
   return (
     <div className="h-screen w-full bg-[#ffffff] text-[#24292f] font-mono overflow-hidden">
       <div className="h-full w-full p-6">
-        <DeleteArea setCards={setCards} />
+        <DeleteArea setCards={setCards} onShowLanding={handleShowLanding} />
         <Board cards={cards} setCards={setCards} />
       </div>
     </div>
@@ -170,7 +180,7 @@ const Column: React.FC<ColumnProps> = ({
 
   const getNearestIndicator = (
     e: DragEvent<HTMLDivElement>,
-    indicators: Element[]
+    indicators: Element[],
   ) => {
     const DISTANCE_OFFSET = 50;
 
@@ -189,7 +199,7 @@ const Column: React.FC<ColumnProps> = ({
       {
         offset: Number.NEGATIVE_INFINITY,
         element: indicators[indicators.length - 1],
-      }
+      },
     );
 
     return el;
@@ -264,7 +274,7 @@ const DropIndicator: React.FC<DropIndicatorProps> = ({ beforeId, column }) => {
   );
 };
 
-const DeleteArea: React.FC<DeleteAreaProps> = ({ setCards }) => {
+const DeleteArea: React.FC<DeleteAreaProps> = ({ setCards, onShowLanding }) => {
   const [active, setActive] = useState<boolean>(false);
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -306,6 +316,14 @@ const DeleteArea: React.FC<DeleteAreaProps> = ({ setCards }) => {
         <div className="flex items-center gap-4">
           {!active && (
             <div className="flex items-center gap-3">
+              <button
+                onClick={onShowLanding}
+                className="flex items-center gap-2 text-xs text-[#656d76] hover:text-[#0969da] font-mono"
+                title="View landing page"
+              >
+                <FiHome className="text-sm" />
+                <span>home</span>
+              </button>
               <a
                 href="https://sudipbiswas.dev"
                 target="_blank"
@@ -412,30 +430,24 @@ const AddCard: React.FC<AddCardProps> = ({ column, setCards }) => {
 
 const DEFAULT_CARDS: Card[] = [
   // BACKLOG
-  { title: "Look into render bug in dashboard", id: "1", column: "backlog" },
-  { title: "SOX compliance checklist", id: "2", column: "backlog" },
-  { title: "[SPIKE] Migrate to Azure", id: "3", column: "backlog" },
-  { title: "Document Notifications service", id: "4", column: "backlog" },
+  { title: "Design user onboarding flow", id: "1", column: "backlog" },
+  { title: "Learn React fundamentals", id: "2", column: "backlog" },
   // TODO
   {
-    title: "Research DB options for new microservice",
-    id: "5",
+    title: "Plan Q4 product roadmap",
+    id: "3",
     column: "todo",
   },
-  { title: "Postmortem for outage", id: "6", column: "todo" },
-  { title: "Sync with product on Q3 roadmap", id: "7", column: "todo" },
-
   // DOING
   {
-    title: "Refactor context providers to use Zustand",
-    id: "8",
+    title: "Build user authentication system",
+    id: "4",
     column: "doing",
   },
-  { title: "Add logging to daily CRON", id: "9", column: "doing" },
   // DONE
   {
-    title: "Set up DD dashboards for Lambda listener",
-    id: "10",
+    title: "Launch mobile app beta version",
+    id: "5",
     column: "done",
   },
 ];
