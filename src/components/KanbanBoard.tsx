@@ -1,7 +1,5 @@
 import React, { useState, DragEvent, useEffect } from "react";
 import { FiPlus, FiTrash } from "react-icons/fi";
-import { motion } from "framer-motion";
-import { FaFire } from "react-icons/fa";
 
 interface Card {
   id: string;
@@ -31,22 +29,14 @@ interface AddCardProps {
   setCards: React.Dispatch<React.SetStateAction<Card[]>>;
 }
 
-interface BurnBarrelProps {
+interface DeleteAreaProps {
   setCards: React.Dispatch<React.SetStateAction<Card[]>>;
 }
 
 const KanbanBoard: React.FC = () => {
-  return (
-    <div className="h-screen w-full bg-neutral-900 text-neutral-50">
-      <Board />
-    </div>
-  );
-};
-
-const Board: React.FC = () => {
   const localCards = localStorage.getItem("cards");
   const [cards, setCards] = useState<Card[]>(
-    localCards ? JSON.parse(localCards) : DEFAULT_CARDS
+    localCards ? JSON.parse(localCards) : DEFAULT_CARDS,
   );
 
   useEffect(() => {
@@ -54,36 +44,51 @@ const Board: React.FC = () => {
   }, [cards]);
 
   return (
-    <div className="flex h-full w-full gap-3 overflow-scroll p-12">
+    <div className="h-screen w-full bg-[#ffffff] text-[#24292f] font-mono overflow-hidden">
+      <div className="h-full w-full p-6">
+        <DeleteArea setCards={setCards} />
+        <Board cards={cards} setCards={setCards} />
+      </div>
+    </div>
+  );
+};
+
+interface BoardProps {
+  cards: Card[];
+  setCards: React.Dispatch<React.SetStateAction<Card[]>>;
+}
+
+const Board: React.FC<BoardProps> = ({ cards, setCards }) => {
+  return (
+    <div className="flex h-full w-full gap-6 overflow-x-auto pb-4">
       <Column
-        title="Backlog"
+        title="BACKLOG"
         column="backlog"
-        headingColor="text-neutral-500"
+        headingColor="text-[#656d76]"
         cards={cards}
         setCards={setCards}
       />
       <Column
         title="TODO"
         column="todo"
-        headingColor="text-yellow-200"
+        headingColor="text-[#bf8700]"
         cards={cards}
         setCards={setCards}
       />
       <Column
-        title="In progress"
+        title="IN_PROGRESS"
         column="doing"
-        headingColor="text-blue-200"
+        headingColor="text-[#0969da]"
         cards={cards}
         setCards={setCards}
       />
       <Column
-        title="Complete"
+        title="DONE"
         column="done"
-        headingColor="text-emerald-200"
+        headingColor="text-[#1a7f37]"
         cards={cards}
         setCards={setCards}
       />
-      <BurnBarrel setCards={setCards} />
     </div>
   );
 };
@@ -164,7 +169,7 @@ const Column: React.FC<ColumnProps> = ({
 
   const getNearestIndicator = (
     e: DragEvent<HTMLDivElement>,
-    indicators: Element[]
+    indicators: Element[],
   ) => {
     const DISTANCE_OFFSET = 50;
 
@@ -183,7 +188,7 @@ const Column: React.FC<ColumnProps> = ({
       {
         offset: Number.NEGATIVE_INFINITY,
         element: indicators[indicators.length - 1],
-      }
+      },
     );
 
     return el;
@@ -201,10 +206,17 @@ const Column: React.FC<ColumnProps> = ({
   const filteredCards = cards.filter((c) => c.column === column);
 
   return (
-    <div className="w-56 shrink-0">
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className={`font-medium ${headingColor}`}>{title}</h3>
-        <span className="rounded text-sm text-neutral-400">
+    <div className="w-72 shrink-0">
+      <div className="mb-4 flex items-center justify-between pb-3 border-b border-[#d1d9e0]">
+        <div className="flex items-center gap-3">
+          <span className="text-[#656d76] font-mono text-xs">//</span>
+          <h3
+            className={`font-medium text-xs uppercase tracking-wider ${headingColor}`}
+          >
+            {title}
+          </h3>
+        </div>
+        <span className="bg-[#f6f8fa] px-3 py-1 text-xs text-[#656d76] font-medium border border-[#d1d9e0]">
           {filteredCards.length}
         </span>
       </div>
@@ -212,25 +224,15 @@ const Column: React.FC<ColumnProps> = ({
         onDrop={handleDragEnd}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        className={`h-full w-full transition-colors ${
-          active ? "bg-neutral-800/50" : "bg-neutral-800/0"
+        className={`h-full w-full py-2 ${
+          active ? "bg-[#dbeafe] border border-[#0969da]" : "bg-transparent"
         }`}
       >
         {filteredCards.map((c) => (
-          <Card
-            key={c.id}
-            {...c}
-            handleDragStart={handleDragStart}
-          />
+          <Card key={c.id} {...c} handleDragStart={handleDragStart} />
         ))}
-        <DropIndicator
-          beforeId={null}
-          column={column}
-        />
-        <AddCard
-          column={column}
-          setCards={setCards}
-        />
+        <DropIndicator beforeId={null} column={column} />
+        <AddCard column={column} setCards={setCards} />
       </div>
     </div>
   );
@@ -239,20 +241,14 @@ const Column: React.FC<ColumnProps> = ({
 const Card: React.FC<CardProps> = ({ title, id, column, handleDragStart }) => {
   return (
     <>
-      <DropIndicator
-        beforeId={id}
-        column={column}
-      />
-      <motion.div
-        layout
-        layoutId={id}
+      <DropIndicator beforeId={id} column={column} />
+      <div
         draggable="true"
-        // @ts-expect-error - data-column is a custom attribute
         onDragStart={(e) => handleDragStart(e, { title, id, column })}
-        className="cursor-grab rounded border border-neutral-700 bg-neutral-800 p-3 active:cursor-grabbing"
+        className="cursor-grab border border-[#d1d9e0] bg-[#f6f8fa] p-4 mb-3 hover:bg-[#ffffff] hover:border-[#0969da] active:cursor-grabbing"
       >
-        <p className="text-sm text-neutral-100">{title}</p>
-      </motion.div>
+        <p className="text-sm text-[#24292f] font-mono">{title}</p>
+      </div>
     </>
   );
 };
@@ -262,14 +258,13 @@ const DropIndicator: React.FC<DropIndicatorProps> = ({ beforeId, column }) => {
     <div
       data-before={beforeId || "-1"}
       data-column={column}
-      className="my-0.5 h-0.5 w-full bg-violet-400 opacity-0"
+      className="my-0.5 h-0.5 w-full bg-[#0969da] opacity-0"
     />
   );
 };
 
-const BurnBarrel: React.FC<BurnBarrelProps> = ({ setCards }) => {
+const DeleteArea: React.FC<DeleteAreaProps> = ({ setCards }) => {
   const [active, setActive] = useState<boolean>(false);
-
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setActive(true);
@@ -281,25 +276,40 @@ const BurnBarrel: React.FC<BurnBarrelProps> = ({ setCards }) => {
 
   const handleDragEnd = (e: DragEvent<HTMLDivElement>) => {
     const cardId = e.dataTransfer.getData("cardId");
-
-    setCards((pv) => pv.filter((c) => c.id !== cardId));
-
+    if (cardId) {
+      setCards((pv) => pv.filter((c) => c.id !== cardId));
+    }
     setActive(false);
   };
 
   return (
-    <div
+    <header
       onDrop={handleDragEnd}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
-      className={`mt-10 grid h-56 w-56 shrink-0 place-content-center rounded border text-3xl ${
+      className={`mb-6 pb-4 ${
         active
-          ? "border-red-800 bg-red-800/20 text-red-500"
-          : "border-neutral-500 bg-neutral-500/20 text-neutral-500"
+          ? "border-b-2 border-[#da3633] bg-[#ffebe9]"
+          : "border-b border-[#d1d9e0]"
       }`}
     >
-      {active ? <FaFire className="animate-bounce" /> : <FiTrash />}
-    </div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-[#0969da] tracking-tight mb-1">
+            kanban.board
+          </h1>
+          <p className="text-sm text-[#656d76]">
+            // Project management interface
+          </p>
+        </div>
+        {active && (
+          <div className="flex items-center gap-3 text-[#da3633] text-sm">
+            <FiTrash className="text-base" />
+            <span className="font-mono">Drop to delete</span>
+          </div>
+        )}
+      </div>
+    </header>
   );
 };
 
@@ -327,43 +337,40 @@ const AddCard: React.FC<AddCardProps> = ({ column, setCards }) => {
   return (
     <>
       {adding ? (
-        <motion.form
-          layout
-          onSubmit={handleSubmit}
-        >
+        <form onSubmit={handleSubmit}>
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
             autoFocus
-            placeholder="Add new task..."
-            className="w-full rounded border border-violet-400 bg-violet-400/20 p-3 text-sm text-neutral-50 placeholder-violet-300 focus:outline-0"
+            placeholder="// Add new task..."
+            className="w-full border border-[#d1d9e0] bg-[#ffffff] p-4 text-sm text-[#24292f] placeholder-[#656d76] focus:outline-0 focus:border-[#0969da] resize-none font-mono leading-relaxed"
+            rows={3}
           />
-          <div className="mt-1.5 flex items-center justify-end gap-1.5">
+          <div className="mt-3 flex items-center justify-end gap-3">
             <button
               type="button"
               onClick={() => setAdding(false)}
-              className="px-3 py-1.5 text-xs text-neutral-400 transition-colors hover:text-neutral-50"
+              className="px-4 py-2 text-xs text-[#656d76] hover:text-[#24292f] hover:bg-[#f6f8fa] font-mono"
             >
-              Close
+              // Cancel
             </button>
             <button
               type="submit"
-              className="flex items-center gap-1.5 rounded bg-neutral-50 px-3 py-1.5 text-xs text-neutral-950 transition-colors hover:bg-neutral-300"
+              className="flex items-center gap-2 bg-[#1f883d] px-4 py-2 text-xs text-white hover:bg-[#1a7f37] font-medium"
             >
               <span>Add</span>
-              <FiPlus />
+              <FiPlus className="text-xs" />
             </button>
           </div>
-        </motion.form>
+        </form>
       ) : (
-        <motion.button
-          layout
+        <button
           onClick={() => setAdding(true)}
-          className="flex w-full items-center gap-1.5 px-3 py-1.5 text-xs text-neutral-400 transition-colors hover:text-neutral-50"
+          className="flex w-full items-center gap-3 px-4 py-3 text-sm text-[#656d76] hover:text-[#24292f] hover:bg-[#f6f8fa] border border-dashed border-[#d1d9e0] hover:border-[#0969da] group"
         >
-          <span>Add card</span>
-          <FiPlus />
-        </motion.button>
+          <FiPlus className="text-base group-hover:text-[#0969da]" />
+          <span className="font-mono">// Add new task</span>
+        </button>
       )}
     </>
   );

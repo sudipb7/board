@@ -1,3 +1,48 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  * {
+    font-family:
+      "JetBrains Mono", "SF Mono", "Monaco", "Inconsolata", "Fira Code",
+      "Fira Mono", "Droid Sans Mono", "Consolas", monospace;
+  }
+
+  body {
+    background-color: #ffffff;
+    color: #24292f;
+    font-feature-settings:
+      "liga" 1,
+      "calt" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f6f8fa;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #d1d9e0;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #8c959f;
+  }
+
+  *:focus {
+    outline: none;
+  }
+
+  ::selection {
+    background-color: #0969da;
+    color: #ffffff;
+  }
+}
