@@ -1,6 +1,6 @@
 import { useLandingPage } from "./hooks/useLandingPage";
-import KanbanBoard from "./components/KanbanBoard";
-import SocialCard from "./components/SocialCard";
+import {LandingPage} from "./components/landing";
+import { Board } from "./components/board";
 
 export default function App() {
   const { hasVisitedLanding, markLandingPageVisited } = useLandingPage();
@@ -13,11 +13,15 @@ export default function App() {
   if (!hasVisitedLanding) {
     return (
       <div className="grid place-items-center min-h-dvh place-content-center">
-        <SocialCard onLaunchApp={handleLaunchApp} />
+        <LandingPage onLaunchApp={handleLaunchApp} />
       </div>
     );
   }
 
   // Show the actual kanban board
-  return <KanbanBoard />;
+  return (
+    <div className="min-h-dvh flex flex-col">
+      <Board />
+    </div>
+  );
 }
