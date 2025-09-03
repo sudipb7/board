@@ -73,7 +73,7 @@ export const DeleteArea = ({
         <div className="flex items-center gap-4">
           {!active && (
             <div className="flex items-center gap-3">
-              {tasks.length && (
+              {tasks.length ? (
                 <button
                   onClick={() => setShowClearAllDialog(true)}
                   className="flex items-center gap-2 text-xs text-destructive"
@@ -82,7 +82,7 @@ export const DeleteArea = ({
                   <FiTrash className="h-3.5 w-3.5" />
                   <span>clear all</span>
                 </button>
-              )}
+              ) : null}
               <button
                 onClick={toggleTheme}
                 className="flex items-center gap-2 text-xs text-muted-foreground"
