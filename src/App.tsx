@@ -1,6 +1,6 @@
-import { useLandingPage } from "./hooks/useLandingPage";
-import {LandingPage} from "./components/landing";
-import { Board } from "./components/board";
+import { Board } from "@/components/board";
+import { LandingPage } from "@/components/landing";
+import { useLandingPage } from "@/hooks/useLandingPage";
 
 export default function App() {
   const { hasVisitedLanding, markLandingPageVisited } = useLandingPage();
@@ -9,7 +9,6 @@ export default function App() {
     markLandingPageVisited();
   };
 
-  // Show landing page if user hasn't visited before
   if (!hasVisitedLanding) {
     return (
       <div className="grid place-items-center min-h-dvh place-content-center">
@@ -18,7 +17,6 @@ export default function App() {
     );
   }
 
-  // Show the actual kanban board
   return (
     <div className="min-h-dvh flex flex-col">
       <Board />

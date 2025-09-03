@@ -1,41 +1,53 @@
-import { Card } from ".";
 import { Column } from "./column";
+import { useTasks, type Task } from "@/hooks/useTasks";
 
 interface KanbanBoardProps {
-  cards: Card[];
-  setCards: React.Dispatch<React.SetStateAction<Card[]>>;
+  tasks: Task[];
 }
 
-export const KanbanBoard = ({ cards, setCards }: KanbanBoardProps) => {
+export const KanbanBoard = ({ tasks }: KanbanBoardProps) => {
+  const { moveTask, clearColumn, moveAllTasks, addTask } = useTasks();
   return (
     <div className="flex-1 flex h-full w-full gap-6 overflow-x-auto pb-4">
       <Column
         title="BACKLOG"
         column="backlog"
-        headingColor="text-[#656d76]"
-        cards={cards}
-        setCards={setCards}
+        headingColor="text-muted-foreground"
+        tasks={tasks}
+        onMoveTask={moveTask}
+        onClearColumn={clearColumn}
+        onMoveAllTasks={moveAllTasks}
+        onAddTask={addTask}
       />
       <Column
         title="TODO"
         column="todo"
-        headingColor="text-[#bf8700]"
-        cards={cards}
-        setCards={setCards}
+        headingColor="text-warning"
+        tasks={tasks}
+        onMoveTask={moveTask}
+        onClearColumn={clearColumn}
+        onMoveAllTasks={moveAllTasks}
+        onAddTask={addTask}
       />
       <Column
-        title="IN_PROGRESS"
+        title="IN PROGRESS"
         column="doing"
-        headingColor="text-[#0969da]"
-        cards={cards}
-        setCards={setCards}
+        headingColor="text-success"
+        tasks={tasks}
+        onMoveTask={moveTask}
+        onClearColumn={clearColumn}
+        onMoveAllTasks={moveAllTasks}
+        onAddTask={addTask}
       />
       <Column
         title="DONE"
         column="done"
-        headingColor="text-[#1a7f37]"
-        cards={cards}
-        setCards={setCards}
+        headingColor="text-primary"
+        tasks={tasks}
+        onMoveTask={moveTask}
+        onClearColumn={clearColumn}
+        onMoveAllTasks={moveAllTasks}
+        onAddTask={addTask}
       />
     </div>
   );

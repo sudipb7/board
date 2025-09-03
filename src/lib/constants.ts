@@ -1,4 +1,4 @@
-export const DEFAULT_CARDS = [
+export const DEFAULT_TASKS = [
   {
     title: "Design user onboarding flow",
     id: "1",
