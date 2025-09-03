@@ -1,7 +1,9 @@
-import { FiHome, FiTrash } from "react-icons/fi";
-import type { Card } from ".";
-import { useState, DragEvent } from "react";
-import { FaGithub, FaTwitter } from "react-icons/fa";
+import { FiTrash } from "react-icons/fi";
+import { useState, DragEvent, useMemo } from "react";
+import { FaGithub, FaTwitter, FaMoon, FaSun } from "react-icons/fa";
+
+import { useTheme } from "@/hooks/useTheme";
+import type { Card } from "@/components/board";
 
 interface DeleteAreaProps {
   setCards: React.Dispatch<React.SetStateAction<Card[]>>;
@@ -9,7 +11,17 @@ interface DeleteAreaProps {
 }
 
 export const DeleteArea = ({ setCards, onShowLanding }: DeleteAreaProps) => {
+  const { theme, setTheme } = useTheme();
   const [active, setActive] = useState<boolean>(false);
+
+  const ThemeIcon = useMemo(() => {
+    return theme === "dark" ? FaMoon : FaSun;
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
+
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setActive(true);
@@ -34,19 +46,19 @@ export const DeleteArea = ({ setCards, onShowLanding }: DeleteAreaProps) => {
       onDragLeave={handleDragLeave}
       className={`mb-6 pb-4 ${
         active
-          ? "border-b-2 border-[#da3633] bg-[#ffebe9]"
-          : "border-b border-[#d1d9e0]"
+          ? "border-b-2 border-destructive bg-red-50 dark:bg-red-950"
+          : "border-b"
       }`}
     >
       <div className="flex items-center justify-between">
         <div>
           <h1
             onClick={onShowLanding}
-            className="text-xl font-bold text-[#0969da] tracking-tight mb-1 cursor-pointer"
+            className="text-xl font-bold text-primary tracking-tight mb-1 cursor-pointer"
           >
             board.sudipbiswas.dev
           </h1>
-          <p className="text-sm text-[#656d76]">
+          <p className="text-sm text-muted-foreground">
             // Managing tasks should be easy and intuitive
           </p>
         </div>
@@ -54,37 +66,37 @@ export const DeleteArea = ({ setCards, onShowLanding }: DeleteAreaProps) => {
           {!active && (
             <div className="flex items-center gap-3">
               <button
-                onClick={onShowLanding}
-                className="flex items-center gap-2 text-xs text-[#656d76] hover:text-[#0969da] font-mono"
-                title="View landing page"
+                onClick={toggleTheme}
+                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary"
+                title="Switch theme"
               >
-                <FiHome className="text-sm" />
-                <span>home</span>
+                <ThemeIcon className="h-3.5 w-3.5" />
+                <span>theme</span>
               </button>
               <a
                 href="https://x.com/sudipcodes"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-xs text-[#656d76] hover:text-[#0969da] font-mono"
+                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary"
               >
-                <FaTwitter className="text-sm" />
+                <FaTwitter className="h-3.5 w-3.5" />
                 <span>twitter</span>
               </a>
               <a
                 href="https://github.com/sudipb7/board"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-xs text-[#656d76] hover:text-[#0969da] font-mono"
+                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary"
               >
-                <FaGithub className="text-sm" />
+                <FaGithub className="h-3.5 w-3.5" />
                 <span>github</span>
               </a>
             </div>
           )}
           {active && (
-            <div className="flex items-center gap-3 text-[#da3633] text-sm">
+            <div className="flex items-center gap-3 text-destructive text-sm">
               <FiTrash className="text-base" />
-              <span className="font-mono">Drop to delete</span>
+              <span>Drop to delete</span>
             </div>
           )}
         </div>

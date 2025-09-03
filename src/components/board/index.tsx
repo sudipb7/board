@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { DEFAULT_CARDS } from "../../lib/constants";
+
 import { DeleteArea } from "./delete-area";
 import { KanbanBoard } from "./kanban-board";
+import { DEFAULT_CARDS } from "@/lib/constants";
 
 export interface Card {
   id: string;
@@ -29,7 +30,7 @@ export const Board = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full p-6 w-full bg-[#ffffff] text-[#24292f] font-mono overflow-hidden">
+    <div className="flex-1 flex flex-col h-full p-6 w-full overflow-hidden">
       <DeleteArea setCards={setCards} onShowLanding={handleShowLanding} />
       <KanbanBoard cards={cards} setCards={setCards} />
     </div>

@@ -1,8 +1,9 @@
 import { useState, DragEvent } from "react";
-import type { Card as CardType } from ".";
+
 import { Card } from "./card";
-import { DropIndicator } from "./drop-indicator";
 import { AddCard } from "./add-card";
+import { DropIndicator } from "./drop-indicator";
+import type { Card as CardType } from "@/components/board";
 
 interface ColumnProps {
   title: string;
@@ -126,16 +127,16 @@ export const Column = ({
 
   return (
     <div className="w-72 shrink-0">
-      <div className="mb-4 flex items-center justify-between pb-3 border-b border-[#d1d9e0]">
+      <div className="mb-4 flex items-center justify-between pb-3 border-b">
         <div className="flex items-center gap-3">
-          <span className="text-[#656d76] font-mono text-xs">//</span>
+          <span className="text-muted-foreground text-xs">//</span>
           <h3
             className={`font-medium text-xs uppercase tracking-wider ${headingColor}`}
           >
             {title}
           </h3>
         </div>
-        <span className="bg-[#f6f8fa] px-3 py-1 text-xs text-[#656d76] font-medium border border-[#d1d9e0]">
+        <span className="bg-muted px-3 py-1 text-xs text-muted-foreground font-medium border">
           {filteredCards.length}
         </span>
       </div>
@@ -143,8 +144,10 @@ export const Column = ({
         onDrop={handleDragEnd}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        className={`h-full w-full py-2 ${
-          active ? "bg-[#dbeafe] border border-[#0969da]" : "bg-transparent"
+        className={`w-full py-2 ${
+          active
+            ? "bg-blue-50 dark:bg-blue-950 border border-primary"
+            : "bg-transparent"
         }`}
       >
         {filteredCards.map((c) => (
