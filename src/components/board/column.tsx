@@ -127,7 +127,7 @@ export const Column = ({
 
   return (
     <div className="w-72 shrink-0">
-      <div className="mb-4 flex items-center justify-between pb-3 border-b">
+      <div className="mb-1 flex items-center justify-between pb-3 border-b">
         <div className="flex items-center gap-3">
           <span className="text-muted-foreground text-xs">//</span>
           <h3

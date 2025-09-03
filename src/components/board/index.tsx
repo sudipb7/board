@@ -31,7 +31,7 @@ export const Board = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full p-6 w-full overflow-hidden">
-      <DeleteArea setCards={setCards} onShowLanding={handleShowLanding} />
+      <DeleteArea cards={cards} setCards={setCards} onShowLanding={handleShowLanding} />
       <KanbanBoard cards={cards} setCards={setCards} />
     </div>
   );

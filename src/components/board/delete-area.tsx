@@ -6,11 +6,16 @@ import { useTheme } from "@/hooks/useTheme";
 import type { Card } from "@/components/board";
 
 interface DeleteAreaProps {
+  cards: Card[];
   setCards: React.Dispatch<React.SetStateAction<Card[]>>;
   onShowLanding?: () => void;
 }
 
-export const DeleteArea = ({ setCards, onShowLanding }: DeleteAreaProps) => {
+export const DeleteArea = ({
+  cards,
+  setCards,
+  onShowLanding,
+}: DeleteAreaProps) => {
   const { theme, setTheme } = useTheme();
   const [active, setActive] = useState<boolean>(false);
 
@@ -20,6 +25,17 @@ export const DeleteArea = ({ setCards, onShowLanding }: DeleteAreaProps) => {
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
+  };
+
+  const handleClearAll = () => {
+    if (cards.length === 0) return;
+
+    const confirmed = window.confirm(
+      "Are you sure you want to clear all cards? This action cannot be undone.",
+    );
+    if (confirmed) {
+      setCards([]);
+    }
   };
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
@@ -66,8 +82,16 @@ export const DeleteArea = ({ setCards, onShowLanding }: DeleteAreaProps) => {
           {!active && (
             <div className="flex items-center gap-3">
               <button
+                onClick={handleClearAll}
+                className="flex items-center gap-2 text-xs text-destructive"
+                title="Clear all cards"
+              >
+                <FiTrash className="h-3.5 w-3.5" />
+                <span>clear all</span>
+              </button>
+              <button
                 onClick={toggleTheme}
-                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary"
+                className="flex items-center gap-2 text-xs text-muted-foreground"
                 title="Switch theme"
               >
                 <ThemeIcon className="h-3.5 w-3.5" />
@@ -77,7 +101,7 @@ export const DeleteArea = ({ setCards, onShowLanding }: DeleteAreaProps) => {
                 href="https://x.com/sudipcodes"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary"
+                className="flex items-center gap-2 text-xs text-muted-foreground"
               >
                 <FaTwitter className="h-3.5 w-3.5" />
                 <span>twitter</span>
@@ -86,7 +110,7 @@ export const DeleteArea = ({ setCards, onShowLanding }: DeleteAreaProps) => {
                 href="https://github.com/sudipb7/board"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary"
+                className="flex items-center gap-2 text-xs text-muted-foreground"
               >
                 <FaGithub className="h-3.5 w-3.5" />
                 <span>github</span>
