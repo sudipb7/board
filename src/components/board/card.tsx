@@ -1,6 +1,7 @@
 import { DragEvent } from "react";
-import type { Card as CardType } from ".";
+
 import { DropIndicator } from "./drop-indicator";
+import type { Card as CardType } from "@/components/board";
 
 interface CardProps extends CardType {
   handleDragStart: (e: DragEvent<HTMLDivElement>, card: CardType) => void;
@@ -13,9 +14,9 @@ export const Card = ({ title, id, column, handleDragStart }: CardProps) => {
       <div
         draggable="true"
         onDragStart={(e) => handleDragStart(e, { title, id, column })}
-        className="cursor-grab border border-[#d1d9e0] bg-[#f6f8fa] p-4 mb-3 hover:bg-[#ffffff] hover:border-[#0969da] active:cursor-grabbing"
+        className="cursor-grab border bg-muted p-4 mb-3 hover:bg-background hover:border-primary active:cursor-grabbing"
       >
-        <p className="text-sm text-[#24292f] font-mono">{title}</p>
+        <p className="text-sm">{title}</p>
       </div>
     </>
   );

@@ -1,5 +1,5 @@
-import { Card } from ".";
 import { Column } from "./column";
+import { Card } from "@/components/board";
 
 interface KanbanBoardProps {
   cards: Card[];
@@ -12,28 +12,28 @@ export const KanbanBoard = ({ cards, setCards }: KanbanBoardProps) => {
       <Column
         title="BACKLOG"
         column="backlog"
-        headingColor="text-[#656d76]"
+        headingColor="text-muted-foreground"
         cards={cards}
         setCards={setCards}
       />
       <Column
         title="TODO"
         column="todo"
-        headingColor="text-[#bf8700]"
+        headingColor="text-warning"
         cards={cards}
         setCards={setCards}
       />
       <Column
         title="IN_PROGRESS"
         column="doing"
-        headingColor="text-[#0969da]"
+        headingColor="text-primary"
         cards={cards}
         setCards={setCards}
       />
       <Column
         title="DONE"
         column="done"
-        headingColor="text-[#1a7f37]"
+        headingColor="text-success"
         cards={cards}
         setCards={setCards}
       />
