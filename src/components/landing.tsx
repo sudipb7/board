@@ -79,15 +79,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-4 pb-2 border-b">
               <span className="text-muted-foreground text-sm">//</span>
-              <h3 className="text-xs sm:text-sm font-medium text-primary uppercase tracking-wider">
-                IN_PROGRESS
+              <h3 className="text-xs sm:text-sm font-medium text-success uppercase tracking-wider">
+                IN PROGRESS
               </h3>
               <span className="bg-muted px-2 py-1 text-xs text-muted-foreground border ml-auto">
                 1
               </span>
             </div>
             <div className="space-y-2 lg:space-y-3">
-              <div className="border border-primary p-2 sm:p-3">
+              <div className="border bg-muted p-2 sm:p-3">
                 <p className="text-xs sm:text-sm">
                   Build user authentication system
                 </p>
@@ -98,7 +98,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-4 pb-2 border-b">
               <span className="text-muted-foreground text-sm">//</span>
-              <h3 className="text-xs sm:text-sm font-medium text-success uppercase tracking-wider">
+              <h3 className="text-xs sm:text-sm font-medium text-primary uppercase tracking-wider">
                 DONE
               </h3>
               <span className="bg-muted px-2 py-1 text-xs text-muted-foreground border ml-auto">
@@ -106,7 +106,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
               </span>
             </div>
             <div className="space-y-2 lg:space-y-3">
-              <div className="border bg-muted p-2 sm:p-3">
+              <div className="border border-primary p-2 sm:p-3">
                 <p className="text-xs sm:text-sm">
                   Launch mobile app beta version
                 </p>

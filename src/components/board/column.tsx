@@ -1,8 +1,14 @@
 import { useState, DragEvent } from "react";
+import { FiMoreVertical, FiTrash, FiArrowRight } from "react-icons/fi";
 
 import { Card } from "./card";
 import { AddCard } from "./add-card";
 import { DropIndicator } from "./drop-indicator";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownSeparator,
+} from "@/components/ui/dropdown";
 import type { Card as CardType } from "@/components/board";
 
 interface ColumnProps {
@@ -125,6 +131,55 @@ export const Column = ({
 
   const filteredCards = cards.filter((c) => c.column === column);
 
+  const handleClearColumn = () => {
+    const confirmed = window.confirm(
+      `Are you sure you want to clear all cards from ${title}? This action cannot be undone.`,
+    );
+    if (confirmed) {
+      setCards((pv) => pv.filter((c) => c.column !== column));
+    }
+  };
+
+  const handleMoveAllTo = (targetColumn: string) => {
+    setCards((pv) =>
+      pv.map((c) => (c.column === column ? { ...c, column: targetColumn } : c)),
+    );
+  };
+
+  const getColumnTitle = (col: string) => {
+    switch (col) {
+      case "backlog":
+        return "BACKLOG";
+      case "todo":
+        return "TODO";
+      case "doing":
+        return "IN PROGRESS";
+      case "done":
+        return "DONE";
+      default:
+        return col.toUpperCase();
+    }
+  };
+
+  const getColumnColor = (col: string) => {
+    switch (col) {
+      case "backlog":
+        return "text-muted-foreground";
+      case "todo":
+        return "text-warning";
+      case "doing":
+        return "text-success";
+      case "done":
+        return "text-primary";
+      default:
+        return "text-muted-foreground";
+    }
+  };
+
+  const otherColumns = ["backlog", "todo", "doing", "done"].filter(
+    (c) => c !== column,
+  );
+
   return (
     <div className="w-72 shrink-0">
       <div className="mb-1 flex items-center justify-between pb-3 border-b">
@@ -136,15 +191,42 @@ export const Column = ({
             {title}
           </h3>
         </div>
-        <span className="bg-muted px-3 py-1 text-xs text-muted-foreground font-medium border">
-          {filteredCards.length}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="bg-muted px-3 py-1 text-xs text-muted-foreground font-medium border">
+            {filteredCards.length}
+          </span>
+          {filteredCards.length > 0 && (
+            <Dropdown
+              trigger={
+                <FiMoreVertical className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground" />
+              }
+            >
+              {otherColumns.map((targetColumn) => (
+                <DropdownItem
+                  key={targetColumn}
+                  onClick={() => handleMoveAllTo(targetColumn)}
+                >
+                  <div className="text-muted-foreground">
+                    // Move all to{" "}
+                    <span className={getColumnColor(targetColumn)}>
+                      {getColumnTitle(targetColumn)}
+                    </span>
+                  </div>
+                </DropdownItem>
+              ))}
+              <DropdownSeparator />
+              <DropdownItem onClick={handleClearColumn} variant="destructive">
+                <span>// Clear column</span>
+              </DropdownItem>
+            </Dropdown>
+          )}
+        </div>
       </div>
       <div
         onDrop={handleDragEnd}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        className={`w-full py-2 ${
+        className={`w-full h-full py-2 ${
           active
             ? "bg-blue-50 dark:bg-blue-950 border border-primary"
             : "bg-transparent"
