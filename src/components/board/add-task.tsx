@@ -1,14 +1,12 @@
 import { FiPlus } from "react-icons/fi";
 import { useState, useRef, useEffect } from "react";
 
-import { Card } from "@/components/board";
-
-interface AddCardProps {
+interface AddTaskProps {
   column: string;
-  setCards: React.Dispatch<React.SetStateAction<Card[]>>;
+  onAddTask: (title: string, column: string) => void;
 }
 
-export const AddCard = ({ column, setCards }: AddCardProps) => {
+export const AddTask = ({ column, onAddTask }: AddTaskProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [text, setText] = useState<string>("");
   const [adding, setAdding] = useState<boolean>(false);
@@ -18,13 +16,7 @@ export const AddCard = ({ column, setCards }: AddCardProps) => {
 
     if (!text.trim().length) return;
 
-    const newCard: Card = {
-      column,
-      title: text.trim(),
-      id: Math.random().toString(),
-    };
-
-    setCards((pv) => [...pv, newCard]);
+    onAddTask(text.trim(), column);
 
     setAdding(false);
     setText("");

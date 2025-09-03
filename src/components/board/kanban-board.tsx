@@ -1,41 +1,53 @@
 import { Column } from "./column";
-import { Card } from "@/components/board";
+import { useTasks, type Task } from "@/hooks/useTasks";
 
 interface KanbanBoardProps {
-  cards: Card[];
-  setCards: React.Dispatch<React.SetStateAction<Card[]>>;
+  tasks: Task[];
 }
 
-export const KanbanBoard = ({ cards, setCards }: KanbanBoardProps) => {
+export const KanbanBoard = ({ tasks }: KanbanBoardProps) => {
+  const { moveTask, clearColumn, moveAllTasks, addTask } = useTasks();
   return (
     <div className="flex-1 flex h-full w-full gap-6 overflow-x-auto pb-4">
       <Column
         title="BACKLOG"
         column="backlog"
         headingColor="text-muted-foreground"
-        cards={cards}
-        setCards={setCards}
+        tasks={tasks}
+        onMoveTask={moveTask}
+        onClearColumn={clearColumn}
+        onMoveAllTasks={moveAllTasks}
+        onAddTask={addTask}
       />
       <Column
         title="TODO"
         column="todo"
         headingColor="text-warning"
-        cards={cards}
-        setCards={setCards}
+        tasks={tasks}
+        onMoveTask={moveTask}
+        onClearColumn={clearColumn}
+        onMoveAllTasks={moveAllTasks}
+        onAddTask={addTask}
       />
       <Column
-        title="IN_PROGRESS"
+        title="IN PROGRESS"
         column="doing"
-        headingColor="text-primary"
-        cards={cards}
-        setCards={setCards}
+        headingColor="text-success"
+        tasks={tasks}
+        onMoveTask={moveTask}
+        onClearColumn={clearColumn}
+        onMoveAllTasks={moveAllTasks}
+        onAddTask={addTask}
       />
       <Column
         title="DONE"
         column="done"
-        headingColor="text-success"
-        cards={cards}
-        setCards={setCards}
+        headingColor="text-primary"
+        tasks={tasks}
+        onMoveTask={moveTask}
+        onClearColumn={clearColumn}
+        onMoveAllTasks={moveAllTasks}
+        onAddTask={addTask}
       />
     </div>
   );

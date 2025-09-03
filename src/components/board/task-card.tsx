@@ -1,13 +1,13 @@
 import { DragEvent } from "react";
 
+import type { Task } from "@/hooks/useTasks";
 import { DropIndicator } from "./drop-indicator";
-import type { Card as CardType } from "@/components/board";
 
-interface CardProps extends CardType {
-  handleDragStart: (e: DragEvent<HTMLDivElement>, card: CardType) => void;
+interface TaskCardProps extends Task {
+  handleDragStart: (e: DragEvent<HTMLDivElement>, card: Task) => void;
 }
 
-export const Card = ({ title, id, column, handleDragStart }: CardProps) => {
+export const TaskCard = ({ title, id, column, handleDragStart }: TaskCardProps) => {
   return (
     <>
       <DropIndicator beforeId={id} column={column} />

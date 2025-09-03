@@ -1,33 +1,47 @@
 import { useState, DragEvent } from "react";
+import { FiMoreVertical } from "react-icons/fi";
 
-import { Card } from "./card";
-import { AddCard } from "./add-card";
+import { TaskCard } from "./task-card";
+import { AddTask } from "./add-task";
 import { DropIndicator } from "./drop-indicator";
-import type { Card as CardType } from "@/components/board";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownSeparator,
+} from "@/components/ui/dropdown";
+import type { Task } from "@/hooks/useTasks";
+import { ConfirmDialog } from "@/components/ui/dialog";
 
 interface ColumnProps {
   title: string;
   column: string;
   headingColor: string;
-  cards: CardType[];
-  setCards: React.Dispatch<React.SetStateAction<CardType[]>>;
+  tasks: Task[];
+  onMoveTask: (taskId: string, column: string, beforeId?: string) => void;
+  onClearColumn: (column: string) => void;
+  onMoveAllTasks: (fromColumn: string, toColumn: string) => void;
+  onAddTask: (title: string, column: string) => void;
 }
 
 export const Column = ({
   title,
   headingColor,
-  cards,
+  tasks,
   column,
-  setCards,
+  onMoveTask,
+  onClearColumn,
+  onMoveAllTasks,
+  onAddTask,
 }: ColumnProps) => {
-  const [active, setActive] = useState<boolean>(false);
+  const [active, setActive] = useState(false);
+  const [showClearDialog, setShowClearDialog] = useState(false);
 
-  const handleDragStart = (e: DragEvent<HTMLDivElement>, card: CardType) => {
-    e.dataTransfer.setData("cardId", card.id);
+  const handleDragStart = (e: DragEvent<HTMLDivElement>, task: Task) => {
+    e.dataTransfer.setData("taskId", task.id);
   };
 
   const handleDragEnd = (e: DragEvent<HTMLDivElement>) => {
-    const cardId = e.dataTransfer.getData("cardId");
+    const taskId = e.dataTransfer.getData("taskId");
 
     setActive(false);
     clearHighlights();
@@ -38,27 +52,9 @@ export const Column = ({
     // @ts-expect-error - data-before is a custom attribute
     const before = element.dataset.before || "-1";
 
-    if (before !== cardId) {
-      let copy = [...cards];
-
-      let cardToTransfer = copy.find((c) => c.id === cardId);
-      if (!cardToTransfer) return;
-      cardToTransfer = { ...cardToTransfer, column };
-
-      copy = copy.filter((c) => c.id !== cardId);
-
-      const moveToBack = before === "-1";
-
-      if (moveToBack) {
-        copy.push(cardToTransfer);
-      } else {
-        const insertAtIndex = copy.findIndex((el) => el.id === before);
-        if (insertAtIndex === undefined) return;
-
-        copy.splice(insertAtIndex, 0, cardToTransfer);
-      }
-
-      setCards(copy);
+    if (before !== taskId) {
+      const beforeId = before === "-1" ? undefined : before;
+      onMoveTask(taskId, column, beforeId);
     }
   };
 
@@ -123,38 +119,115 @@ export const Column = ({
     setActive(false);
   };
 
-  const filteredCards = cards.filter((c) => c.column === column);
+  const filteredTasks = tasks.filter((task) => task.column === column);
+
+  const handleMoveAllTo = (targetColumn: string) => {
+    onMoveAllTasks(column, targetColumn);
+  };
+
+  const getColumnTitle = (col: string) => {
+    switch (col) {
+      case "backlog":
+        return "BACKLOG";
+      case "todo":
+        return "TODO";
+      case "doing":
+        return "IN PROGRESS";
+      case "done":
+        return "DONE";
+      default:
+        return col.toUpperCase();
+    }
+  };
+
+  const getColumnColor = (col: string) => {
+    switch (col) {
+      case "backlog":
+        return "text-muted-foreground";
+      case "todo":
+        return "text-warning";
+      case "doing":
+        return "text-success";
+      case "done":
+        return "text-primary";
+      default:
+        return "text-muted-foreground";
+    }
+  };
+
+  const otherColumns = ["backlog", "todo", "doing", "done"].filter(
+    (c) => c !== column,
+  );
 
   return (
     <div className="w-72 shrink-0">
-      <div className="mb-4 flex items-center justify-between pb-3 border-b">
+      <div className="mb-1 flex items-center justify-between pb-3 border-b">
         <div className="flex items-center gap-3">
           <span className="text-muted-foreground text-xs">//</span>
-          <h3
-            className={`font-medium text-xs uppercase tracking-wider ${headingColor}`}
-          >
+          <h3 className={`font-medium text-xs uppercase ${headingColor}`}>
             {title}
           </h3>
         </div>
-        <span className="bg-muted px-3 py-1 text-xs text-muted-foreground font-medium border">
-          {filteredCards.length}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="bg-muted px-3 py-1 text-xs text-muted-foreground font-medium border">
+            {filteredTasks.length}
+          </span>
+          {filteredTasks.length > 0 && (
+            <Dropdown
+              trigger={
+                <FiMoreVertical className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground" />
+              }
+            >
+              {otherColumns.map((targetColumn) => (
+                <DropdownItem
+                  key={targetColumn}
+                  onClick={() => handleMoveAllTo(targetColumn)}
+                >
+                  <div className="text-muted-foreground">
+                    // Move all to{" "}
+                    <span className={getColumnColor(targetColumn)}>
+                      {getColumnTitle(targetColumn)}
+                    </span>
+                  </div>
+                </DropdownItem>
+              ))}
+              <DropdownSeparator />
+              <DropdownItem
+                onClick={() => setShowClearDialog(true)}
+                variant="destructive"
+              >
+                <span>// Clear column</span>
+              </DropdownItem>
+            </Dropdown>
+          )}
+        </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={showClearDialog}
+        onClose={() => setShowClearDialog(false)}
+        onConfirm={() => onClearColumn(column)}
+        title="Clear Column"
+        description={`Are you sure you want to clear all tasks from ${title}?`}
+        confirmText="Clear"
+        cancelText="Cancel"
+        variant="destructive"
+      />
       <div
         onDrop={handleDragEnd}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        className={`w-full py-2 ${
+        className={`w-full h-full py-2 ${
           active
             ? "bg-blue-50 dark:bg-blue-950 border border-primary"
             : "bg-transparent"
         }`}
       >
-        {filteredCards.map((c) => (
-          <Card key={c.id} {...c} handleDragStart={handleDragStart} />
+        {filteredTasks.map((c) => (
+          <TaskCard key={c.id} {...c} handleDragStart={handleDragStart} />
         ))}
         <DropIndicator beforeId={null} column={column} />
-        <AddCard column={column} setCards={setCards} />
+        <AddTask column={column} onAddTask={onAddTask} />
       </div>
     </div>
   );
