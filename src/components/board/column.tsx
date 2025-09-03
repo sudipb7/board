@@ -1,5 +1,5 @@
 import { useState, DragEvent } from "react";
-import { FiMoreVertical, FiTrash, FiArrowRight } from "react-icons/fi";
+import { FiMoreVertical } from "react-icons/fi";
 
 import { Card } from "./card";
 import { AddCard } from "./add-card";
@@ -9,6 +9,7 @@ import {
   DropdownItem,
   DropdownSeparator,
 } from "@/components/ui/dropdown";
+import { ConfirmDialog } from "@/components/ui/dialog";
 import type { Card as CardType } from "@/components/board";
 
 interface ColumnProps {
@@ -26,7 +27,8 @@ export const Column = ({
   column,
   setCards,
 }: ColumnProps) => {
-  const [active, setActive] = useState<boolean>(false);
+  const [active, setActive] = useState(false);
+  const [showClearDialog, setShowClearDialog] = useState(false);
 
   const handleDragStart = (e: DragEvent<HTMLDivElement>, card: CardType) => {
     e.dataTransfer.setData("cardId", card.id);
@@ -131,15 +133,6 @@ export const Column = ({
 
   const filteredCards = cards.filter((c) => c.column === column);
 
-  const handleClearColumn = () => {
-    const confirmed = window.confirm(
-      `Are you sure you want to clear all cards from ${title}? This action cannot be undone.`,
-    );
-    if (confirmed) {
-      setCards((pv) => pv.filter((c) => c.column !== column));
-    }
-  };
-
   const handleMoveAllTo = (targetColumn: string) => {
     setCards((pv) =>
       pv.map((c) => (c.column === column ? { ...c, column: targetColumn } : c)),
@@ -186,7 +179,7 @@ export const Column = ({
         <div className="flex items-center gap-3">
           <span className="text-muted-foreground text-xs">//</span>
           <h3
-            className={`font-medium text-xs uppercase tracking-wider ${headingColor}`}
+            className={`font-medium text-xs uppercase ${headingColor}`}
           >
             {title}
           </h3>
@@ -215,13 +208,29 @@ export const Column = ({
                 </DropdownItem>
               ))}
               <DropdownSeparator />
-              <DropdownItem onClick={handleClearColumn} variant="destructive">
+              <DropdownItem
+                onClick={() => setShowClearDialog(true)}
+                variant="destructive"
+              >
                 <span>// Clear column</span>
               </DropdownItem>
             </Dropdown>
           )}
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={showClearDialog}
+        onClose={() => setShowClearDialog(false)}
+        onConfirm={() =>
+          setCards((pv) => pv.filter((c) => c.column !== column))
+        }
+        title="Clear Column"
+        description={`Are you sure you want to clear all cards from ${title}?`}
+        confirmText="Clear"
+        cancelText="Cancel"
+        variant="destructive"
+      />
       <div
         onDrop={handleDragEnd}
         onDragOver={handleDragOver}

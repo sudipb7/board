@@ -40,7 +40,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-4 pb-2 border-b">
               <span className="text-muted-foreground text-sm">//</span>
-              <h3 className="text-xs sm:text-sm font-medium text-muted-foreground uppercase tracking-wider">
+              <h3 className="text-xs sm:text-sm font-medium text-muted-foreground uppercase">
                 BACKLOG
               </h3>
               <span className="bg-muted px-2 py-1 text-xs text-muted-foreground border ml-auto">
@@ -62,7 +62,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-4 pb-2 border-b">
               <span className="text-muted-foreground text-sm">//</span>
-              <h3 className="text-xs sm:text-sm font-medium text-warning uppercase tracking-wider">
+              <h3 className="text-xs sm:text-sm font-medium text-warning uppercase">
                 TODO
               </h3>
               <span className="bg-muted px-2 py-1 text-xs text-muted-foreground border ml-auto">
@@ -79,7 +79,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-4 pb-2 border-b">
               <span className="text-muted-foreground text-sm">//</span>
-              <h3 className="text-xs sm:text-sm font-medium text-success uppercase tracking-wider">
+              <h3 className="text-xs sm:text-sm font-medium text-success uppercase">
                 IN PROGRESS
               </h3>
               <span className="bg-muted px-2 py-1 text-xs text-muted-foreground border ml-auto">
@@ -98,7 +98,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-4 pb-2 border-b">
               <span className="text-muted-foreground text-sm">//</span>
-              <h3 className="text-xs sm:text-sm font-medium text-primary uppercase tracking-wider">
+              <h3 className="text-xs sm:text-sm font-medium text-primary uppercase">
                 DONE
               </h3>
               <span className="bg-muted px-2 py-1 text-xs text-muted-foreground border ml-auto">

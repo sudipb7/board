@@ -4,6 +4,7 @@ import { FaGithub, FaTwitter, FaMoon, FaSun } from "react-icons/fa";
 
 import { useTheme } from "@/hooks/useTheme";
 import type { Card } from "@/components/board";
+import { ConfirmDialog } from "@/components/ui/dialog";
 
 interface DeleteAreaProps {
   cards: Card[];
@@ -18,6 +19,7 @@ export const DeleteArea = ({
 }: DeleteAreaProps) => {
   const { theme, setTheme } = useTheme();
   const [active, setActive] = useState<boolean>(false);
+  const [showClearAllDialog, setShowClearAllDialog] = useState<boolean>(false);
 
   const ThemeIcon = useMemo(() => {
     return theme === "dark" ? FaMoon : FaSun;
@@ -25,17 +27,6 @@ export const DeleteArea = ({
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
-  };
-
-  const handleClearAll = () => {
-    if (cards.length === 0) return;
-
-    const confirmed = window.confirm(
-      "Are you sure you want to clear all cards? This action cannot be undone.",
-    );
-    if (confirmed) {
-      setCards([]);
-    }
   };
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
@@ -81,17 +72,19 @@ export const DeleteArea = ({
         <div className="flex items-center gap-4">
           {!active && (
             <div className="flex items-center gap-3">
-              <button
-                onClick={handleClearAll}
-                className="flex items-center gap-2 text-xs text-destructive"
-                title="Clear all cards"
-              >
-                <FiTrash className="h-3.5 w-3.5" />
-                <span>clear all</span>
-              </button>
+              {cards.length && (
+                <button
+                  onClick={() => setShowClearAllDialog(true)}
+                  className="flex items-center gap-2 text-xs text-destructive hover:text-destructive/80"
+                  title="Clear all cards"
+                >
+                  <FiTrash className="h-3.5 w-3.5" />
+                  <span>clear all</span>
+                </button>
+              )}
               <button
                 onClick={toggleTheme}
-                className="flex items-center gap-2 text-xs text-muted-foreground"
+                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary"
                 title="Switch theme"
               >
                 <ThemeIcon className="h-3.5 w-3.5" />
@@ -101,7 +94,7 @@ export const DeleteArea = ({
                 href="https://x.com/sudipcodes"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-xs text-muted-foreground"
+                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary"
               >
                 <FaTwitter className="h-3.5 w-3.5" />
                 <span>twitter</span>
@@ -110,7 +103,7 @@ export const DeleteArea = ({
                 href="https://github.com/sudipb7/board"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-xs text-muted-foreground"
+                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary"
               >
                 <FaGithub className="h-3.5 w-3.5" />
                 <span>github</span>
@@ -125,6 +118,16 @@ export const DeleteArea = ({
           )}
         </div>
       </div>
+      <ConfirmDialog
+        isOpen={showClearAllDialog}
+        onClose={() => setShowClearAllDialog(false)}
+        onConfirm={() => setCards([])}
+        title="Clear All Cards"
+        description="Are you sure you want to clear all cards?"
+        confirmText="Clear All"
+        cancelText="Cancel"
+        variant="destructive"
+      />
     </header>
   );
 };

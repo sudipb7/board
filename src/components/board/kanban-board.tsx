@@ -24,7 +24,7 @@ export const KanbanBoard = ({ cards, setCards }: KanbanBoardProps) => {
         setCards={setCards}
       />
       <Column
-        title="IN_PROGRESS"
+        title="IN PROGRESS"
         column="doing"
         headingColor="text-success"
         cards={cards}
