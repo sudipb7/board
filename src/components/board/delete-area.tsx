@@ -3,21 +3,22 @@ import { useState, DragEvent, useMemo } from "react";
 import { FaGithub, FaTwitter, FaMoon, FaSun } from "react-icons/fa";
 
 import { useTheme } from "@/hooks/useTheme";
-import type { Card } from "@/components/board";
+import { useTasks, type Task } from "@/hooks/useTasks";
 import { ConfirmDialog } from "@/components/ui/dialog";
 
 interface DeleteAreaProps {
-  cards: Card[];
-  setCards: React.Dispatch<React.SetStateAction<Card[]>>;
+  tasks: Task[];
+  onClearAll: () => void;
   onShowLanding?: () => void;
 }
 
 export const DeleteArea = ({
-  cards,
-  setCards,
+  tasks,
+  onClearAll,
   onShowLanding,
 }: DeleteAreaProps) => {
   const { theme, setTheme } = useTheme();
+  const { deleteTask } = useTasks();
   const [active, setActive] = useState<boolean>(false);
   const [showClearAllDialog, setShowClearAllDialog] = useState<boolean>(false);
 
@@ -39,9 +40,9 @@ export const DeleteArea = ({
   };
 
   const handleDragEnd = (e: DragEvent<HTMLDivElement>) => {
-    const cardId = e.dataTransfer.getData("cardId");
-    if (cardId) {
-      setCards((pv) => pv.filter((c) => c.id !== cardId));
+    const taskId = e.dataTransfer.getData("taskId");
+    if (taskId) {
+      deleteTask(taskId);
     }
     setActive(false);
   };
@@ -72,11 +73,11 @@ export const DeleteArea = ({
         <div className="flex items-center gap-4">
           {!active && (
             <div className="flex items-center gap-3">
-              {cards.length && (
+              {tasks.length && (
                 <button
                   onClick={() => setShowClearAllDialog(true)}
-                  className="flex items-center gap-2 text-xs text-destructive hover:text-destructive/80"
-                  title="Clear all cards"
+                  className="flex items-center gap-2 text-xs text-destructive"
+                  title="Clear all tasks"
                 >
                   <FiTrash className="h-3.5 w-3.5" />
                   <span>clear all</span>
@@ -84,7 +85,7 @@ export const DeleteArea = ({
               )}
               <button
                 onClick={toggleTheme}
-                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary"
+                className="flex items-center gap-2 text-xs text-muted-foreground"
                 title="Switch theme"
               >
                 <ThemeIcon className="h-3.5 w-3.5" />
@@ -94,7 +95,7 @@ export const DeleteArea = ({
                 href="https://x.com/sudipcodes"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary"
+                className="flex items-center gap-2 text-xs text-muted-foreground"
               >
                 <FaTwitter className="h-3.5 w-3.5" />
                 <span>twitter</span>
@@ -103,7 +104,7 @@ export const DeleteArea = ({
                 href="https://github.com/sudipb7/board"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary"
+                className="flex items-center gap-2 text-xs text-muted-foreground"
               >
                 <FaGithub className="h-3.5 w-3.5" />
                 <span>github</span>
@@ -121,9 +122,9 @@ export const DeleteArea = ({
       <ConfirmDialog
         isOpen={showClearAllDialog}
         onClose={() => setShowClearAllDialog(false)}
-        onConfirm={() => setCards([])}
-        title="Clear All Cards"
-        description="Are you sure you want to clear all cards?"
+        onConfirm={onClearAll}
+        title="Clear All Tasks"
+        description="Are you sure you want to clear all tasks?"
         confirmText="Clear All"
         cancelText="Cancel"
         variant="destructive"

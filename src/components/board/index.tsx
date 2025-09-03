@@ -1,24 +1,9 @@
-import { useState, useEffect } from "react";
-
 import { DeleteArea } from "./delete-area";
 import { KanbanBoard } from "./kanban-board";
-import { DEFAULT_CARDS } from "@/lib/constants";
-
-export interface Card {
-  id: string;
-  title: string;
-  column: string;
-}
+import { useTasks } from "@/hooks/useTasks";
 
 export const Board = () => {
-  const localCards = localStorage.getItem("cards");
-  const [cards, setCards] = useState<Card[]>(
-    localCards ? JSON.parse(localCards) : DEFAULT_CARDS,
-  );
-
-  useEffect(() => {
-    localStorage.setItem("cards", JSON.stringify(cards));
-  }, [cards]);
+  const { tasks, clearAllTasks } = useTasks();
 
   const handleShowLanding = () => {
     try {
@@ -31,8 +16,12 @@ export const Board = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full p-6 w-full overflow-hidden">
-      <DeleteArea cards={cards} setCards={setCards} onShowLanding={handleShowLanding} />
-      <KanbanBoard cards={cards} setCards={setCards} />
+      <DeleteArea
+        tasks={tasks}
+        onClearAll={clearAllTasks}
+        onShowLanding={handleShowLanding}
+      />
+      <KanbanBoard tasks={tasks} />
     </div>
   );
 };
